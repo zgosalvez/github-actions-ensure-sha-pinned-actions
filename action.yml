@@ -1,0 +1,11 @@
+# https://github.com/actions/javascript-action
+
+name: 'Ensure SHA Pinned Actions'
+description: 'Ensure that GitHub Actions are pinned to full length commit SHAs'
+author: 'Zennon Gosalvez'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: shield
+  color: gray-dark
