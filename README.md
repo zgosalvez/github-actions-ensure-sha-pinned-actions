@@ -7,7 +7,7 @@ This GitHub Action (written in JavaScript) allows you to leverage GitHub Actions
 Create a workflow `.yml` file in your `.github/workflows` directory. An [example workflow](#common-workflow) is available below. For more information, reference the GitHub Help Documentation for [Creating a workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file).
 
 ### Inputs
-None. This action will automatically scan for workflows in the `.github/wokrflows` directory.
+None. This action will automatically scan for workflows in the `.github/workflows` directory.
 
 ### Outputs
 None. This action will throw an error if it finds GitHub Actions that are not pinned to full length commit SHAs.
