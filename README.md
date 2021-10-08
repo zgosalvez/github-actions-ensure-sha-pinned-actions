@@ -12,7 +12,7 @@ Create a workflow `.yml` file in your `.github/workflows` directory. An [example
 ```yaml
   white-listed-actions: |
     aws-actions/          # Trust all actions published by aws-actions
-    docker/login-action   # Trust only docker's login-action
+    docker/login-action   # Trust docker's login-action only
 ```
 
 ### Outputs
@@ -37,8 +37,8 @@ jobs:
         uses: zgosalvez/github-actions-ensure-sha-pinned-actions@v1.0.1 # Replace this
         with:
           white-listed-actions: |
-            aws-actions/ -> Dont alert on aws-actions/* actions
-            docker/login-action -> specifically dont alert on docker's login-action action, but do alert on other docker/ actions
+            aws-actions/
+            docker/login-action
 ```
 
 ## License
