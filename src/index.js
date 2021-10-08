@@ -10,6 +10,8 @@ async function run() {
     const workflowsPath = '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
+    const whiteListedActions = core.getInput('white-listed-actions');
+    const whiteList = whiteListedActions.split(/\r?\n/);
 
     for await (const file of globber.globGenerator()) {
       const basename = path.basename(file);
@@ -23,7 +25,7 @@ async function run() {
       }
 
       core.startGroup(workflowsPath + '/' + basename);
-      
+
       for (const job in jobs) {
         const steps = jobs[job]['steps'];
 
@@ -35,13 +37,19 @@ async function run() {
           const uses = step['uses'];
 
           if (typeof uses === 'string' && uses.includes('@')) {
-            const version = uses.substr(uses.indexOf('@') + 1);
+            const atIndex = uses.indexOf('@');
+            const version = uses.substr(atIndex + 1);
+            const repoAndAction = uses.substr(0, atIndex);
+            const isWhitelistedRepoAndAction = whiteListedActions && whiteList.some((whiteListedItem) => repoAndAction.startsWith(whiteListedItem));
 
             if (!sha1.test(version)) {
-              actionHasError = true;
-              fileHasError = true;
-
-              core.error(`${uses} is not pinned to a full length commit SHA.`);
+              if(isWhitelistedRepoAndAction) {
+                core.info(`${repoAndAction} matched whitelist - ignoring unpinned action.`)
+              } else {
+                actionHasError = true;
+                fileHasError = true;
+                core.error(`${uses} is not pinned to a full length commit SHA.`);
+              }
             }
           }
         }
@@ -53,7 +61,7 @@ async function run() {
 
       core.endGroup();
     }
-    
+
     if (actionHasError) {
       throw new Error('At least one workflow contains an unpinned GitHub Action version.');
     }
