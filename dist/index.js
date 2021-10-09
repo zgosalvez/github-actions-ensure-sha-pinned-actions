@@ -9195,6 +9195,12 @@ const path = __webpack_require__(622);
 const sha1 = __webpack_require__(846);
 const yaml = __webpack_require__(552);
 
+function assertUsesSHA(uses) {
+  return typeof uses === 'string' &&
+    uses.includes('@') &&
+    sha1.test(uses.substr(uses.indexOf('@') + 1))
+}
+
 async function run() {
   try {
     const workflowsPath = '.github/workflows';
@@ -9213,27 +9219,30 @@ async function run() {
       }
 
       core.startGroup(workflowsPath + '/' + basename);
-      
+
       for (const job in jobs) {
+        const uses = jobs[job]['uses'];
         const steps = jobs[job]['steps'];
 
-        if (steps === undefined) {
-          core.warning(`The "${job}" job of the "${basename}" workflow does not contain steps.`);
-        }
+        if (uses !== undefined) {
+          if (!assertUsesSHA(uses)) {
+            actionHasError = true;
+            fileHasError = true;
 
-        for (const step of steps) {
-          const uses = step['uses'];
-
-          if (typeof uses === 'string' && uses.includes('@')) {
-            const version = uses.substr(uses.indexOf('@') + 1);
-
-            if (!sha1.test(version)) {
-              actionHasError = true;
-              fileHasError = true;
-
-              core.error(`${uses} is not pinned to a full length commit SHA.`);
-            }
+            core.error(`${uses} is not pinned to a full length commit SHA.`);
           }
+        } else if (steps !== undefined) {
+          for (const step of steps) {
+            const uses = step['uses'];
+              if (!assertUsesSHA(uses)) {
+                actionHasError = true;
+                fileHasError = true;
+
+                core.error(`${uses} is not pinned to a full length commit SHA.`);
+              }
+            }
+        } else {
+          core.warning(`The "${job}" job of the "${basename}" workflow does not contain steps or uses.`);
         }
       }
 
@@ -9243,7 +9252,7 @@ async function run() {
 
       core.endGroup();
     }
-    
+
     if (actionHasError) {
       throw new Error('At least one workflow contains an unpinned GitHub Action version.');
     }
@@ -9253,6 +9262,7 @@ async function run() {
 }
 
 run();
+
 
 /***/ }),
 
