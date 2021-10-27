@@ -44,7 +44,7 @@ async function run() {
         } else if (steps !== undefined) {
           for (const step of steps) {
             const uses = step['uses'];
-              if (!assertUsesSHA(uses)) {
+              if (uses !== undefined && !assertUsesSHA(uses)) {
                 actionHasError = true;
                 fileHasError = true;
 
