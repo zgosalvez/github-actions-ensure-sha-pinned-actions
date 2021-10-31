@@ -5,12 +5,6 @@ const path = require('path');
 const sha1 = require('sha1-regex');
 const yaml = require('yaml');
 
-function assertUsesSHA(uses) {
-  return typeof uses === 'string' &&
-    uses.includes('@') &&
-    sha1.test(uses.substr(uses.indexOf('@') + 1))
-}
-
 async function run() {
   try {
     const workflowsPath = '.github/workflows';
@@ -44,13 +38,14 @@ async function run() {
         } else if (steps !== undefined) {
           for (const step of steps) {
             const uses = step['uses'];
-              if (uses !== undefined && !assertUsesSHA(uses)) {
-                actionHasError = true;
-                fileHasError = true;
 
-                core.error(`${uses} is not pinned to a full length commit SHA.`);
-              }
+            if (uses !== undefined && !assertUsesSHA(uses)) {
+              actionHasError = true;
+              fileHasError = true;
+
+              core.error(`${uses} is not pinned to a full length commit SHA.`);
             }
+          }
         } else {
           core.warning(`The "${job}" job of the "${basename}" workflow does not contain steps or uses.`);
         }
@@ -72,3 +67,9 @@ async function run() {
 }
 
 run();
+
+function assertUsesSHA(uses) {
+  return typeof uses === 'string' &&
+    uses.includes('@') &&
+    sha1.test(uses.substr(uses.indexOf('@') + 1))
+}
