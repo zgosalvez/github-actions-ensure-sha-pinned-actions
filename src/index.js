@@ -10,6 +10,8 @@ async function run() {
     const workflowsPath = '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
+    const whiteListedActions = core.getInput('white-listed-actions');
+    const whiteList = whiteListedActions.split(/\r?\n/);
 
     for await (const file of globber.globGenerator()) {
       const basename = path.basename(file);
@@ -29,7 +31,7 @@ async function run() {
         const steps = jobs[job]['steps'];
 
         if (uses !== undefined) {
-          if (!assertUsesSHA(uses)) {
+          if (!assertUsesSHA(uses) && !isWhitelistedAction(uses, whiteListedActions, whiteList)) {
             actionHasError = true;
             fileHasError = true;
 
@@ -39,7 +41,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (uses !== undefined && !assertUsesSHA(uses)) {
+            if (uses !== undefined && !assertUsesSHA(uses) && !isWhitelistedAction(uses, whiteListedActions, whiteList)) {
               actionHasError = true;
               fileHasError = true;
 
@@ -72,4 +74,15 @@ function assertUsesSHA(uses) {
   return typeof uses === 'string' &&
     uses.includes('@') &&
     sha1.test(uses.substr(uses.indexOf('@') + 1))
+}
+
+function isWhitelistedAction(uses, whiteListedActions, whiteList) {
+  const atIndex = uses.indexOf('@');
+  const repoAndAction = uses.substr(0, atIndex);
+  const isWhitelistedRepoAndAction = whiteListedActions && whiteList.some((whiteListedItem) => repoAndAction.startsWith(whiteListedItem));
+
+  if(isWhitelistedRepoAndAction) {
+    core.info(`${repoAndAction} matched whitelist - ignoring unpinned action.`)
+  }
+  return isWhitelistedRepoAndAction;
 }

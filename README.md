@@ -7,7 +7,14 @@ This GitHub Action (written in JavaScript) allows you to leverage GitHub Actions
 Create a workflow `.yml` file in your `.github/workflows` directory. An [example workflow](#common-workflow) is available below. For more information, reference the GitHub Help Documentation for [Creating a workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file).
 
 ### Inputs
-None. This action will automatically scan for workflows in the `.github/workflows` directory.
+#### Optional
+* `white-listed-actions` List of repos and actions that WILL NOT trigger a commit SHA pin failure. Each entry must be on a newline.
+```yaml
+  white-listed-actions: |
+    aws-actions/          # Trust all actions published by aws-actions
+    docker/login-action   # Trust docker's login-action only
+```
+
 
 ### Outputs
 None. This action will throw an error if it finds GitHub Actions that are not pinned to full length commit SHAs.
@@ -29,6 +36,10 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
       - name: Ensure SHA pinned actions
         uses: zgosalvez/github-actions-ensure-sha-pinned-actions@v1.0.1 # Replace this
+        with:
+          white-listed-actions: |
+            aws-actions/
+            docker/login-action
 ```
 
 ## License

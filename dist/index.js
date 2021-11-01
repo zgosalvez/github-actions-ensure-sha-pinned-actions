@@ -1,9 +1,8 @@
-require('./sourcemap-register.js');module.exports =
-/******/ (() => { // webpackBootstrap
+require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 241:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 542:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -28,8 +27,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issue = exports.issueCommand = void 0;
-const os = __importStar(__webpack_require__(87));
-const utils_1 = __webpack_require__(278);
+const os = __importStar(__nccwpck_require__(87));
+const utils_1 = __nccwpck_require__(925);
 /**
  * Commands
  *
@@ -101,8 +100,8 @@ function escapeProperty(s) {
 
 /***/ }),
 
-/***/ 186:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 802:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -136,12 +135,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
-const command_1 = __webpack_require__(241);
-const file_command_1 = __webpack_require__(717);
-const utils_1 = __webpack_require__(278);
-const os = __importStar(__webpack_require__(87));
-const path = __importStar(__webpack_require__(622));
-const oidc_utils_1 = __webpack_require__(41);
+const command_1 = __nccwpck_require__(542);
+const file_command_1 = __nccwpck_require__(510);
+const utils_1 = __nccwpck_require__(925);
+const os = __importStar(__nccwpck_require__(87));
+const path = __importStar(__nccwpck_require__(622));
+const oidc_utils_1 = __nccwpck_require__(74);
 /**
  * The code to exit an action
  */
@@ -420,8 +419,8 @@ exports.getIDToken = getIDToken;
 
 /***/ }),
 
-/***/ 717:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 510:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -449,9 +448,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issueCommand = void 0;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const fs = __importStar(__webpack_require__(747));
-const os = __importStar(__webpack_require__(87));
-const utils_1 = __webpack_require__(278);
+const fs = __importStar(__nccwpck_require__(747));
+const os = __importStar(__nccwpck_require__(87));
+const utils_1 = __nccwpck_require__(925);
 function issueCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
     if (!filePath) {
@@ -469,8 +468,8 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
-/***/ 41:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 74:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -485,9 +484,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OidcClient = void 0;
-const http_client_1 = __webpack_require__(925);
-const auth_1 = __webpack_require__(702);
-const core_1 = __webpack_require__(186);
+const http_client_1 = __nccwpck_require__(574);
+const auth_1 = __nccwpck_require__(959);
+const core_1 = __nccwpck_require__(802);
 class OidcClient {
     static createHttpClient(allowRetry = true, maxRetry = 10) {
         const requestOptions = {
@@ -553,7 +552,7 @@ exports.OidcClient = OidcClient;
 
 /***/ }),
 
-/***/ 278:
+/***/ 925:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -600,8 +599,8 @@ exports.toCommandProperties = toCommandProperties;
 
 /***/ }),
 
-/***/ 90:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 700:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -616,7 +615,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.create = void 0;
-const internal_globber_1 = __webpack_require__(298);
+const internal_globber_1 = __nccwpck_require__(870);
 /**
  * Constructs a globber
  *
@@ -633,8 +632,8 @@ exports.create = create;
 
 /***/ }),
 
-/***/ 26:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 551:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -659,7 +658,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOptions = void 0;
-const core = __importStar(__webpack_require__(186));
+const core = __importStar(__nccwpck_require__(802));
 /**
  * Returns a copy with defaults filled in.
  */
@@ -690,8 +689,8 @@ exports.getOptions = getOptions;
 
 /***/ }),
 
-/***/ 298:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 870:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -744,14 +743,14 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DefaultGlobber = void 0;
-const core = __importStar(__webpack_require__(186));
-const fs = __importStar(__webpack_require__(747));
-const globOptionsHelper = __importStar(__webpack_require__(26));
-const path = __importStar(__webpack_require__(622));
-const patternHelper = __importStar(__webpack_require__(5));
-const internal_match_kind_1 = __webpack_require__(63);
-const internal_pattern_1 = __webpack_require__(536);
-const internal_search_state_1 = __webpack_require__(117);
+const core = __importStar(__nccwpck_require__(802));
+const fs = __importStar(__nccwpck_require__(747));
+const globOptionsHelper = __importStar(__nccwpck_require__(551));
+const path = __importStar(__nccwpck_require__(622));
+const patternHelper = __importStar(__nccwpck_require__(877));
+const internal_match_kind_1 = __nccwpck_require__(515);
+const internal_pattern_1 = __nccwpck_require__(485);
+const internal_search_state_1 = __nccwpck_require__(167);
 const IS_WINDOWS = process.platform === 'win32';
 class DefaultGlobber {
     constructor(options) {
@@ -932,7 +931,7 @@ exports.DefaultGlobber = DefaultGlobber;
 
 /***/ }),
 
-/***/ 63:
+/***/ 515:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -957,8 +956,8 @@ var MatchKind;
 
 /***/ }),
 
-/***/ 849:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 387:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -986,8 +985,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.safeTrimTrailingSeparator = exports.normalizeSeparators = exports.hasRoot = exports.hasAbsoluteRoot = exports.ensureAbsoluteRoot = exports.dirname = void 0;
-const path = __importStar(__webpack_require__(622));
-const assert_1 = __importDefault(__webpack_require__(357));
+const path = __importStar(__nccwpck_require__(622));
+const assert_1 = __importDefault(__nccwpck_require__(357));
 const IS_WINDOWS = process.platform === 'win32';
 /**
  * Similar to path.dirname except normalizes the path separators and slightly better handling for Windows UNC paths.
@@ -1162,8 +1161,8 @@ exports.safeTrimTrailingSeparator = safeTrimTrailingSeparator;
 
 /***/ }),
 
-/***/ 836:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 168:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -1191,9 +1190,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Path = void 0;
-const path = __importStar(__webpack_require__(622));
-const pathHelper = __importStar(__webpack_require__(849));
-const assert_1 = __importDefault(__webpack_require__(357));
+const path = __importStar(__nccwpck_require__(622));
+const pathHelper = __importStar(__nccwpck_require__(387));
+const assert_1 = __importDefault(__nccwpck_require__(357));
 const IS_WINDOWS = process.platform === 'win32';
 /**
  * Helper class for parsing paths into segments
@@ -1282,8 +1281,8 @@ exports.Path = Path;
 
 /***/ }),
 
-/***/ 5:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 877:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -1308,8 +1307,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.partialMatch = exports.match = exports.getSearchPaths = void 0;
-const pathHelper = __importStar(__webpack_require__(849));
-const internal_match_kind_1 = __webpack_require__(63);
+const pathHelper = __importStar(__nccwpck_require__(387));
+const internal_match_kind_1 = __nccwpck_require__(515);
 const IS_WINDOWS = process.platform === 'win32';
 /**
  * Given an array of patterns, returns an array of paths to search.
@@ -1383,8 +1382,8 @@ exports.partialMatch = partialMatch;
 
 /***/ }),
 
-/***/ 536:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ 485:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -1412,13 +1411,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Pattern = void 0;
-const os = __importStar(__webpack_require__(87));
-const path = __importStar(__webpack_require__(622));
-const pathHelper = __importStar(__webpack_require__(849));
-const assert_1 = __importDefault(__webpack_require__(357));
-const minimatch_1 = __webpack_require__(973);
-const internal_match_kind_1 = __webpack_require__(63);
-const internal_path_1 = __webpack_require__(836);
+const os = __importStar(__nccwpck_require__(87));
+const path = __importStar(__nccwpck_require__(622));
+const pathHelper = __importStar(__nccwpck_require__(387));
+const assert_1 = __importDefault(__nccwpck_require__(357));
+const minimatch_1 = __nccwpck_require__(478);
+const internal_match_kind_1 = __nccwpck_require__(515);
+const internal_path_1 = __nccwpck_require__(168);
 const IS_WINDOWS = process.platform === 'win32';
 class Pattern {
     constructor(patternOrNegate, isImplicitPattern = false, segments, homedir) {
@@ -1645,7 +1644,7 @@ exports.Pattern = Pattern;
 
 /***/ }),
 
-/***/ 117:
+/***/ 167:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -1663,7 +1662,7 @@ exports.SearchState = SearchState;
 
 /***/ }),
 
-/***/ 702:
+/***/ 959:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -1729,15 +1728,15 @@ exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHand
 
 /***/ }),
 
-/***/ 925:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 574:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const http = __webpack_require__(605);
-const https = __webpack_require__(211);
-const pm = __webpack_require__(443);
+const http = __nccwpck_require__(605);
+const https = __nccwpck_require__(211);
+const pm = __nccwpck_require__(795);
 let tunnel;
 var HttpCodes;
 (function (HttpCodes) {
@@ -2156,7 +2155,7 @@ class HttpClient {
         if (useProxy) {
             // If using proxy, need tunnel
             if (!tunnel) {
-                tunnel = __webpack_require__(294);
+                tunnel = __nccwpck_require__(132);
             }
             const agentOptions = {
                 maxSockets: maxSockets,
@@ -2274,7 +2273,7 @@ exports.HttpClient = HttpClient;
 
 /***/ }),
 
-/***/ 443:
+/***/ 795:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -2339,7 +2338,7 @@ exports.checkBypass = checkBypass;
 
 /***/ }),
 
-/***/ 417:
+/***/ 817:
 /***/ ((module) => {
 
 "use strict";
@@ -2409,11 +2408,11 @@ function range(a, b, str) {
 
 /***/ }),
 
-/***/ 850:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ 889:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-var concatMap = __webpack_require__(891);
-var balanced = __webpack_require__(417);
+var concatMap = __nccwpck_require__(620);
+var balanced = __nccwpck_require__(817);
 
 module.exports = expandTop;
 
@@ -2617,7 +2616,7 @@ function expand(str, isTop) {
 
 /***/ }),
 
-/***/ 891:
+/***/ 620:
 /***/ ((module) => {
 
 module.exports = function (xs, fn) {
@@ -2637,19 +2636,19 @@ var isArray = Array.isArray || function (xs) {
 
 /***/ }),
 
-/***/ 973:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ 478:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = minimatch
 minimatch.Minimatch = Minimatch
 
 var path = { sep: '/' }
 try {
-  path = __webpack_require__(622)
+  path = __nccwpck_require__(622)
 } catch (er) {}
 
 var GLOBSTAR = minimatch.GLOBSTAR = Minimatch.GLOBSTAR = {}
-var expand = __webpack_require__(850)
+var expand = __nccwpck_require__(889)
 
 var plTypes = {
   '!': { open: '(?:(?!(?:', close: '))[^/]*?)'},
@@ -3567,7 +3566,7 @@ function regExpEscape (s) {
 
 /***/ }),
 
-/***/ 846:
+/***/ 780:
 /***/ ((module) => {
 
 module.exports = /^[a-f0-9]{40}$/i
@@ -3575,27 +3574,27 @@ module.exports = /^[a-f0-9]{40}$/i
 
 /***/ }),
 
-/***/ 294:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ 132:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-module.exports = __webpack_require__(219);
+module.exports = __nccwpck_require__(451);
 
 
 /***/ }),
 
-/***/ 219:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 451:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var net = __webpack_require__(631);
-var tls = __webpack_require__(16);
-var http = __webpack_require__(605);
-var https = __webpack_require__(211);
-var events = __webpack_require__(614);
-var assert = __webpack_require__(357);
-var util = __webpack_require__(669);
+var net = __nccwpck_require__(631);
+var tls = __nccwpck_require__(16);
+var http = __nccwpck_require__(605);
+var https = __nccwpck_require__(211);
+var events = __nccwpck_require__(614);
+var assert = __nccwpck_require__(357);
+var util = __nccwpck_require__(669);
 
 
 exports.httpOverHttp = httpOverHttp;
@@ -3855,15 +3854,15 @@ exports.debug = debug; // for test
 
 /***/ }),
 
-/***/ 506:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 452:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var PlainValue = __webpack_require__(215);
-var resolveSeq = __webpack_require__(227);
-var Schema = __webpack_require__(21);
+var PlainValue = __nccwpck_require__(273);
+var resolveSeq = __nccwpck_require__(879);
+var Schema = __nccwpck_require__(68);
 
 const defaultOptions = {
   anchorPrefix: 'a',
@@ -4620,7 +4619,7 @@ exports.scalarOptions = scalarOptions;
 
 /***/ }),
 
-/***/ 215:
+/***/ 273:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -5504,15 +5503,15 @@ exports.defaultTags = defaultTags;
 
 /***/ }),
 
-/***/ 21:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 68:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var PlainValue = __webpack_require__(215);
-var resolveSeq = __webpack_require__(227);
-var warnings = __webpack_require__(3);
+var PlainValue = __nccwpck_require__(273);
+var resolveSeq = __nccwpck_require__(879);
+var warnings = __nccwpck_require__(200);
 
 function createMap(schema, obj, ctx) {
   const map = new resolveSeq.YAMLMap(schema);
@@ -6037,18 +6036,18 @@ exports.Schema = Schema;
 
 /***/ }),
 
-/***/ 65:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 236:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var parseCst = __webpack_require__(445);
-var Document$1 = __webpack_require__(506);
-var Schema = __webpack_require__(21);
-var PlainValue = __webpack_require__(215);
-var warnings = __webpack_require__(3);
-__webpack_require__(227);
+var parseCst = __nccwpck_require__(42);
+var Document$1 = __nccwpck_require__(452);
+var Schema = __nccwpck_require__(68);
+var PlainValue = __nccwpck_require__(273);
+var warnings = __nccwpck_require__(200);
+__nccwpck_require__(879);
 
 function createNode(value, wrapScalars = true, tag) {
   if (tag === undefined && typeof wrapScalars === 'string') {
@@ -6124,13 +6123,13 @@ exports.YAML = YAML;
 
 /***/ }),
 
-/***/ 445:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 42:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var PlainValue = __webpack_require__(215);
+var PlainValue = __nccwpck_require__(273);
 
 class BlankLine extends PlainValue.Node {
   constructor() {
@@ -7885,13 +7884,13 @@ exports.parse = parse;
 
 /***/ }),
 
-/***/ 227:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 879:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var PlainValue = __webpack_require__(215);
+var PlainValue = __nccwpck_require__(273);
 
 function addCommentBefore(str, indent, comment) {
   if (!comment) return str;
@@ -10054,14 +10053,14 @@ exports.toJSON = toJSON;
 
 /***/ }),
 
-/***/ 3:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 200:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 
-var PlainValue = __webpack_require__(215);
-var resolveSeq = __webpack_require__(227);
+var PlainValue = __nccwpck_require__(273);
+var resolveSeq = __nccwpck_require__(879);
 
 /* global atob, btoa, Buffer */
 const binary = {
@@ -10478,29 +10477,149 @@ exports.warnOptionDeprecation = warnOptionDeprecation;
 
 /***/ }),
 
-/***/ 552:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ 421:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-module.exports = __webpack_require__(65).YAML
+module.exports = __nccwpck_require__(236).YAML
 
 
 /***/ }),
 
-/***/ 351:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ 357:
+/***/ ((module) => {
 
-const core = __webpack_require__(186);
-const fs = __webpack_require__(747);
-const glob = __webpack_require__(90);
-const path = __webpack_require__(622);
-const sha1 = __webpack_require__(846);
-const yaml = __webpack_require__(552);
+"use strict";
+module.exports = require("assert");
+
+/***/ }),
+
+/***/ 614:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("events");
+
+/***/ }),
+
+/***/ 747:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs");
+
+/***/ }),
+
+/***/ 605:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("http");
+
+/***/ }),
+
+/***/ 211:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("https");
+
+/***/ }),
+
+/***/ 631:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("net");
+
+/***/ }),
+
+/***/ 87:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("os");
+
+/***/ }),
+
+/***/ 622:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
+
+/***/ }),
+
+/***/ 16:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("tls");
+
+/***/ }),
+
+/***/ 669:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("util");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __nccwpck_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		var threw = true;
+/******/ 		try {
+/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
+/******/ 			threw = false;
+/******/ 		} finally {
+/******/ 			if(threw) delete __webpack_module_cache__[moduleId];
+/******/ 		}
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat */
+/******/ 	
+/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+const core = __nccwpck_require__(802);
+const fs = __nccwpck_require__(747);
+const glob = __nccwpck_require__(700);
+const path = __nccwpck_require__(622);
+const sha1 = __nccwpck_require__(780);
+const yaml = __nccwpck_require__(421);
 
 async function run() {
   try {
     const workflowsPath = '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
+    const whiteListedActions = core.getInput('white-listed-actions');
+    const whiteList = whiteListedActions.split(/\r?\n/);
 
     for await (const file of globber.globGenerator()) {
       const basename = path.basename(file);
@@ -10520,7 +10639,7 @@ async function run() {
         const steps = jobs[job]['steps'];
 
         if (uses !== undefined) {
-          if (!assertUsesSHA(uses)) {
+          if (!assertUsesSHA(uses) && !isWhitelistedAction(uses, whiteListedActions, whiteList)) {
             actionHasError = true;
             fileHasError = true;
 
@@ -10530,7 +10649,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (uses !== undefined && !assertUsesSHA(uses)) {
+            if (uses !== undefined && !assertUsesSHA(uses) && !isWhitelistedAction(uses, whiteListedActions, whiteList)) {
               actionHasError = true;
               fileHasError = true;
 
@@ -10565,128 +10684,20 @@ function assertUsesSHA(uses) {
     sha1.test(uses.substr(uses.indexOf('@') + 1))
 }
 
+function isWhitelistedAction(uses, whiteListedActions, whiteList) {
+  const atIndex = uses.indexOf('@');
+  const repoAndAction = uses.substr(0, atIndex);
+  const isWhitelistedRepoAndAction = whiteListedActions && whiteList.some((whiteListedItem) => repoAndAction.startsWith(whiteListedItem));
 
-/***/ }),
+  if(isWhitelistedRepoAndAction) {
+    core.info(`${repoAndAction} matched whitelist - ignoring unpinned action.`)
+  }
+  return isWhitelistedRepoAndAction;
+}
 
-/***/ 357:
-/***/ ((module) => {
+})();
 
-"use strict";
-module.exports = require("assert");;
-
-/***/ }),
-
-/***/ 614:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("events");;
-
-/***/ }),
-
-/***/ 747:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs");;
-
-/***/ }),
-
-/***/ 605:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("http");;
-
-/***/ }),
-
-/***/ 211:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("https");;
-
-/***/ }),
-
-/***/ 631:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("net");;
-
-/***/ }),
-
-/***/ 87:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("os");;
-
-/***/ }),
-
-/***/ 622:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("path");;
-
-/***/ }),
-
-/***/ 16:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("tls");;
-
-/***/ }),
-
-/***/ 669:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("util");;
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		var threw = true;
-/******/ 		try {
-/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 			threw = false;
-/******/ 		} finally {
-/******/ 			if(threw) delete __webpack_module_cache__[moduleId];
-/******/ 		}
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat */
-/******/ 	
-/******/ 	__webpack_require__.ab = __dirname + "/";/************************************************************************/
-/******/ 	// module exports must be returned from runtime so entry inlining is disabled
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(351);
+module.exports = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
