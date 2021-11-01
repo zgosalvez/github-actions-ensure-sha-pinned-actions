@@ -9,3 +9,7 @@ runs:
 branding:
   icon: shield
   color: gray-dark
+inputs:
+  white-listed-actions:
+    description: 'List of repos and actions that WILL NOT trigger a commit SHA pin failure. Each entry must be on a newline.'
+    required: false
