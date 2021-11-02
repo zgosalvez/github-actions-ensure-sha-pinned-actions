@@ -28,8 +28,8 @@ async function run() {
         const uses = jobs[job]['uses'];
         const steps = jobs[job]['steps'];
 
-        if (uses !== undefined) {
-          if (!assertUsesSHA(uses)) {
+        if (typeof uses === 'string') {
+          if (uses.includes('@') && !assertUsesSHA(uses)) {
             actionHasError = true;
             fileHasError = true;
 
@@ -39,7 +39,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (uses !== undefined && !assertUsesSHA(uses)) {
+            if (typeof uses === 'string' && uses.includes('@') && !assertUsesSHA(uses)) {
               actionHasError = true;
               fileHasError = true;
 
