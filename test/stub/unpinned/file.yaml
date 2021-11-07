@@ -1,0 +1,4 @@
+jobs:
+  stub:
+    steps:
+    - uses: actions/checkout@v1
