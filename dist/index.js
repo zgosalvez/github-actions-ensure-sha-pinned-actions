@@ -10498,7 +10498,7 @@ const yaml = __webpack_require__(552);
 
 async function run() {
   try {
-    const workflowsPath = '.github/workflows';
+    const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
 
@@ -10519,7 +10519,7 @@ async function run() {
         const uses = jobs[job]['uses'];
         const steps = jobs[job]['steps'];
 
-        if (uses !== undefined) {
+        if (assertUsesVersion(uses)) {
           if (!assertUsesSHA(uses)) {
             actionHasError = true;
             fileHasError = true;
@@ -10530,7 +10530,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (uses !== undefined && !assertUsesSHA(uses)) {
+            if (assertUsesVersion(uses) && !assertUsesSHA(uses)) {
               actionHasError = true;
               fileHasError = true;
 
@@ -10538,7 +10538,7 @@ async function run() {
             }
           }
         } else {
-          core.warning(`The "${job}" job of the "${basename}" workflow does not contain steps or uses.`);
+          core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);
         }
       }
 
@@ -10559,10 +10559,12 @@ async function run() {
 
 run();
 
+function assertUsesVersion(uses) {
+  return typeof uses === 'string' && uses.includes('@');
+}
+
 function assertUsesSHA(uses) {
-  return typeof uses === 'string' &&
-    uses.includes('@') &&
-    sha1.test(uses.substr(uses.indexOf('@') + 1))
+  return sha1.test(uses.substr(uses.indexOf('@') + 1));
 }
 
 

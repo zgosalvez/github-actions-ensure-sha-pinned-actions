@@ -1,4 +1,5 @@
 # GitHub Action — Ensure SHA Pinned Actions
+[![CI](https://github.com/zgosalvez/github-actions-ensure-sha-pinned-actions/actions/workflows/ci.yml/badge.svg)](https://github.com/zgosalvez/github-actions-ensure-sha-pinned-actions/actions/workflows/ci.yml)
 
 This GitHub Action (written in JavaScript) allows you to leverage GitHub Actions to ensure that GitHub Actions are pinned to full length commit SHAs. This does not fail for referenced actions in the same repository when using the [`./path/to/dir` syntax](https://docs.github.com/actions/learn-github-actions/finding-and-customizing-actions#referencing-an-action-in-the-same-repository-where-a-workflow-file-uses-the-action). For more information, see "[using third-party actions](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions)."
 
