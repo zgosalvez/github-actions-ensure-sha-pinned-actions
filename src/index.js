@@ -24,21 +24,35 @@ async function run() {
 
       core.startGroup(workflowsPath + '/' + basename);
 
+      const allowlist = core.getMultilineInput('allowlist');
+
       for (const job in jobs) {
         const uses = jobs[job]['uses'];
         const steps = jobs[job]['steps'];
 
-        if (assertUsesVersion(uses)) {
-          if (!assertUsesSHA(uses)) {
-            actionHasError = true;
-            fileHasError = true;
-
-            core.error(`${uses} is not pinned to a full length commit SHA.`);
+        if (uses !== undefined) {
+          if (typeof uses === 'string' && allowlist.some(allow => uses.startsWith(allow.trim()))) {
+              core.info(`${uses} found in allowlist, skipping.`);
+              continue;
           }
-        } else if (steps !== undefined) {
+          if (assertUsesVersion(uses)) {
+            if (!assertUsesSHA(uses)) {
+              actionHasError = true;
+              fileHasError = true;
+
+              core.error(`${uses} is not pinned to a full length commit SHA.`);
+            }
+          }
+          continue;
+        }
+        if (steps !== undefined) {
           for (const step of steps) {
             const uses = step['uses'];
 
+            if (typeof uses === 'string' && allowlist.some(allow => uses.startsWith(allow.trim()))) {
+              core.info(`${uses} found in allowlist, skipping.`);
+              continue;
+            }
             if (assertUsesVersion(uses) && !assertUsesSHA(uses)) {
               actionHasError = true;
               fileHasError = true;
@@ -46,9 +60,9 @@ async function run() {
               core.error(`${uses} is not pinned to a full length commit SHA.`);
             }
           }
-        } else {
-          core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);
+          continue;
         }
+        core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);
       }
 
       if (!fileHasError) {

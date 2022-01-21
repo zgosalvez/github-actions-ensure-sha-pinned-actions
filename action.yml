@@ -9,3 +9,7 @@ runs:
 branding:
   icon: shield
   color: gray-dark
+inputs:
+  allowlist:
+    required: false
+    description: A list of action name/path prefixes which are not required to be pinned
