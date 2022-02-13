@@ -7,6 +7,7 @@ const yaml = require('yaml');
 
 async function run() {
   try {
+    const allowlist = core.getInput('allowlist');
     const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
@@ -29,7 +30,7 @@ async function run() {
         const steps = jobs[job]['steps'];
 
         if (assertUsesVersion(uses)) {
-          if (!assertUsesSHA(uses)) {
+          if (!assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
             actionHasError = true;
             fileHasError = true;
 
@@ -39,7 +40,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (assertUsesVersion(uses) && !assertUsesSHA(uses)) {
+            if (assertUsesVersion(uses) && !assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
               actionHasError = true;
               fileHasError = true;
 
@@ -74,4 +75,19 @@ function assertUsesVersion(uses) {
 
 function assertUsesSHA(uses) {
   return sha1.test(uses.substr(uses.indexOf('@') + 1));
+}
+
+function assertUsesAllowlist(uses, allowlist) {
+  if (!allowlist) {
+    return false;
+  }
+
+  const action = uses.substr(0, uses.indexOf('@'));
+  const isAllowed = allowlist.split(/\r?\n/).some((allow) => action.startsWith(allow));
+
+  if(isAllowed) {
+    core.info(`${action} matched allowlist — ignoring action.`)
+  }
+
+  return isAllowed;
 }
