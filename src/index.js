@@ -7,11 +7,10 @@ const yaml = require('yaml');
 
 async function run() {
   try {
+    const allowlist = core.getInput('allowlist');
     const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
-    const whiteListedActions = core.getInput('white-listed-actions');
-    const whiteList = whiteListedActions.split(/\r?\n/);
 
     for await (const file of globber.globGenerator()) {
       const basename = path.basename(file);
@@ -31,7 +30,7 @@ async function run() {
         const steps = jobs[job]['steps'];
 
         if (assertUsesVersion(uses)) {
-          if (!assertUsesSHA(uses) && !isWhitelistedAction(uses, whiteListedActions, whiteList)) {
+          if (!assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
             actionHasError = true;
             fileHasError = true;
 
@@ -41,7 +40,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (assertUsesVersion(uses) && !assertUsesSHA(uses) && !isWhitelistedAction(uses, whiteListedActions, whiteList)) {
+            if (assertUsesVersion(uses) && !assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
               actionHasError = true;
               fileHasError = true;
 
@@ -78,13 +77,17 @@ function assertUsesSHA(uses) {
   return sha1.test(uses.substr(uses.indexOf('@') + 1));
 }
 
-function isWhitelistedAction(uses, whiteListedActions, whiteList) {
-  const atIndex = uses.indexOf('@');
-  const repoAndAction = uses.substr(0, atIndex);
-  const isWhitelistedRepoAndAction = whiteListedActions && whiteList.some((whiteListedItem) => repoAndAction.startsWith(whiteListedItem));
-
-  if(isWhitelistedRepoAndAction) {
-    core.info(`${repoAndAction} matched whitelist - ignoring unpinned action.`)
+function assertUsesAllowlist(uses, allowlist) {
+  if (!allowlist) {
+    return false;
   }
-  return isWhitelistedRepoAndAction;
+
+  const action = uses.substr(0, uses.indexOf('@'));
+  const isAllowed = allowlist.split(/\r?\n/).some((allow) => action.startsWith(allow));
+
+  if(isAllowed) {
+    core.info(`${action} matched allowlist — ignoring action.`)
+  }
+
+  return isAllowed;
 }
