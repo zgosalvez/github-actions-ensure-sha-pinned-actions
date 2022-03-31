@@ -20,7 +20,7 @@ jest.test('action has empty error', () => {
     } catch (error) {
         const result = error.stdout.toString();
 
-        jest.expect(result).toContain('Cannot read properties of null (reading \'jobs\')');
+        jest.expect(result).toContain('Cannot read property \'jobs\' of null');
         jest.expect(result).not.toContain('No issues were found.');
     }
 });
