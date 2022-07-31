@@ -12,3 +12,6 @@ branding:
 inputs:
   allowlist:
     description: 'The list of owners or repositories that will be ignored and will not throw an error. Each entry must be on a new line. Optional. Default: `` (deny all)'
+  dry_run:
+    description: 'Set to `true` to show warnings instead of failing. Optional. Default: `false` (fail on any error)'
+    default: false

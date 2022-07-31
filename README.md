@@ -16,6 +16,7 @@ For more information on these inputs, see the [Workflow syntax for GitHub Action
     aws-actions/          # Trust all actions published by aws-actions
     docker/login-action   # Trust docker's login-action only
 ```
+- `dry_run`: Set to `true` to show warnings instead of failing. Optional. Default: `false` (fail on any error)
 
 ### Outputs
 None. This action will throw an error if it finds GitHub Actions that are not pinned to full length commit SHAs.
