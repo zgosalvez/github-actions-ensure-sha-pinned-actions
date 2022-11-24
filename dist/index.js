@@ -10499,6 +10499,7 @@ const yaml = __webpack_require__(552);
 async function run() {
   try {
     const allowlist = core.getInput('allowlist');
+    const isDryRun = core.getInput('dry_run') === 'true' ? true : false;
     const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
@@ -10525,7 +10526,7 @@ async function run() {
             actionHasError = true;
             fileHasError = true;
 
-            core.error(`${uses} is not pinned to a full length commit SHA.`);
+            reportError(`${uses} is not pinned to a full length commit SHA.`, isDryRun);
           }
         } else if (steps !== undefined) {
           for (const step of steps) {
@@ -10535,7 +10536,7 @@ async function run() {
               actionHasError = true;
               fileHasError = true;
 
-              core.error(`${uses} is not pinned to a full length commit SHA.`);
+              reportError(`${uses} is not pinned to a full length commit SHA.`, isDryRun);
             }
           }
         } else {
@@ -10550,7 +10551,7 @@ async function run() {
       core.endGroup();
     }
 
-    if (actionHasError) {
+    if (!isDryRun && actionHasError) {
       throw new Error('At least one workflow contains an unpinned GitHub Action version.');
     }
   } catch (error) {
@@ -10581,6 +10582,14 @@ function assertUsesAllowlist(uses, allowlist) {
   }
 
   return isAllowed;
+}
+
+function reportError(message, isDryRun) {
+  if (isDryRun) {
+    core.warning(message);
+  } else {
+    core.error(message);
+  }
 }
 
 
