@@ -1,0 +1,26 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get app installation token
+        uses: npalm/action-app-token@dd4bb16d91ced5659bc618705c96b822c5a42136 # ratchet:npalm/action-app-token@dd4bb16d91ced5659bc618705c96b822c5a42136
+        id: token
+        with:
+          appId: ${{ secrets.APP_ID }}
+          appPrivateKeyBase64: ${{ secrets.APP_PRIVATE_KEY_BASE64 }}
+          appInstallationType: repo
+          appInstallationValue: ${{ github.repository }}
+      - name: Release
+        uses: google-github-actions/release-please-action@5c07f8be172b1f6e90f9c35baf8184461b91b85f # ratchet:google-github-actions/release-please-action@5c07f8be172b1f6e90f9c35baf8184461b91b85f
+        with:
+          release-type: simple
+          token: ${{ steps.token.outputs.token }}
