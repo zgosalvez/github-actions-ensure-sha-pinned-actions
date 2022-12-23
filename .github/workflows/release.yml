@@ -15,8 +15,8 @@ jobs:
         uses: philips-software/app-token-action@a37926571e4cec6f219e06727136efdd073d8657 # ratchet:philips-software/app-token-action@v1.1.2
         id: token
         with:
-          app_id: ${{ secrets.APP_ID }}
-          app_base64_private_key: ${{ secrets.APP_PRIVATE_KEY_BASE64 }}
+          app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          app_base64_private_key: ${{ secrets.RELEASE_BOT_APP_PRIVATE_KEY_BASE64 }}
           auth_type: installation
       - name: Release
         uses: google-github-actions/release-please-action@5c07f8be172b1f6e90f9c35baf8184461b91b85f # ratchet:google-github-actions/release-please-action@v3.7.1
