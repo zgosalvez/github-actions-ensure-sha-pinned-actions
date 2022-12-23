@@ -1,0 +1,34 @@
+name: Dependabot auto-approve
+on: pull_request
+permissions:
+  pull-requests: write
+  contents: write
+jobs:
+  dependabot:
+    runs-on: [self-hosted, x64, linux, philips]
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@5ef00187930bafb52d529e0b9c3dff045dfa9851 # ratchet:dependabot/fetch-metadata@v1.3.5
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Checkout
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # ratchet:actions/checkout@v3.2.0
+      - name: Approve a PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Enable auto-merge Dependabot PRs for dev dependencies patch / minor
+        if: ${{contains(steps.metadata.outputs.dependency-type, ':development') && steps.metadata.outputs.update-type != 'version-update:semver-major'}}
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Enable auto-merge Dependabot PRs for production dependencies minor
+        if: ${{contains(steps.metadata.outputs.dependency-type, ':production') && steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
