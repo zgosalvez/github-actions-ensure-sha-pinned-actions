@@ -19,7 +19,7 @@
   "author": "Zennon Gosalvez",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.9.1",
+    "@actions/core": "^1.10.0",
     "@actions/glob": "^0.1.1",
     "sha1-regex": "^1.0.0",
     "yaml": "^1.10.0"
