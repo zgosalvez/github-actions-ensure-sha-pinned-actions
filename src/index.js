@@ -30,7 +30,7 @@ async function run() {
         const steps = jobs[job]['steps'];
 
         if (assertUsesVersion(uses)) {
-          if (!assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
+          if (!assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist)) {
             actionHasError = true;
             fileHasError = true;
 
@@ -40,7 +40,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (assertUsesVersion(uses) && !assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
+            if (assertUsesVersion(uses) && !assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist)) {
               actionHasError = true;
               fileHasError = true;
 
@@ -73,7 +73,7 @@ function assertUsesVersion(uses) {
   return typeof uses === 'string' && uses.includes('@');
 }
 
-function assertUsesSHA(uses) {
+function assertUsesSha(uses) {
   return /^[a-f0-9]{40}$/i.test(uses.substr(uses.indexOf('@') + 1));
 }
 
