@@ -2,7 +2,6 @@ const core = require('@actions/core');
 const fs = require('fs');
 const glob = require('@actions/glob');
 const path = require('path');
-const sha1 = require('sha1-regex');
 const yaml = require('yaml');
 
 async function run() {
@@ -75,7 +74,7 @@ function assertUsesVersion(uses) {
 }
 
 function assertUsesSHA(uses) {
-  return sha1.test(uses.substr(uses.indexOf('@') + 1));
+  return /^[a-f0-9]{40}$/i.test(uses.substr(uses.indexOf('@') + 1));
 }
 
 function assertUsesAllowlist(uses, allowlist) {
