@@ -7,7 +7,7 @@ const yaml = require('yaml');
 async function run() {
   try {
     const allowlist = core.getInput('allowlist');
-    const isDryRun = core.getInput('dry_run') === 'true' ? true : false;
+    const isDryRun = core.getInput('dry_run') === 'true';
     const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
