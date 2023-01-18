@@ -4,6 +4,9 @@ const glob = require('@actions/glob');
 const path = require('path');
 const yaml = require('yaml');
 
+const sha1 = /\b[a-f0-9]{40}\b/i;
+const sha256 = /\b[A-Fa-f0-9]{64}\b/i;
+
 async function run() {
   try {
     const allowlist = core.getInput('allowlist');
@@ -75,10 +78,10 @@ function assertUsesVersion(uses) {
 
 function assertUsesSha(uses) {
   if (uses.startsWith('docker://')) {
-    return /\b[A-Fa-f0-9]{64}\b/i.test(uses.substr(uses.indexOf('sha256:') + 7));
+    return sha256.test(uses.substr(uses.indexOf('sha256:') + 7));
   }
 
-  return /^[a-f0-9]{40}$/i.test(uses.substr(uses.indexOf('@') + 1));
+  return sha1.test(uses.substr(uses.indexOf('@') + 1));
 }
 
 function assertUsesAllowlist(uses, allowlist) {
