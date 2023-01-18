@@ -74,6 +74,10 @@ function assertUsesVersion(uses) {
 }
 
 function assertUsesSha(uses) {
+  if (uses.startsWith('docker://')) {
+    return /\b[A-Fa-f0-9]{64}\b/i.test(uses.substr(uses.indexOf('sha256:') + 7));
+  }
+
   return /^[a-f0-9]{40}$/i.test(uses.substr(uses.indexOf('@') + 1));
 }
 
