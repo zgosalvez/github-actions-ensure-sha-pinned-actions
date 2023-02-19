@@ -2,3 +2,7 @@ jobs:
   stub:
     steps:
     - uses: actions/checkout@v1
+  dockerstub:
+    steps:
+      - uses: docker://rhysd/actionlint:latest
+      - uses: docker://rhysd/actionlint:1.6.22

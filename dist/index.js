@@ -4206,14 +4206,6 @@ function regExpEscape (s) {
 
 /***/ }),
 
-/***/ 6846:
-/***/ ((module) => {
-
-module.exports = /^[a-f0-9]{40}$/i
-
-
-/***/ }),
-
 /***/ 4294:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -13611,13 +13603,15 @@ const core = __nccwpck_require__(2186);
 const fs = __nccwpck_require__(7147);
 const glob = __nccwpck_require__(8090);
 const path = __nccwpck_require__(1017);
-const sha1 = __nccwpck_require__(6846);
 const yaml = __nccwpck_require__(4083);
+
+const sha1 = /\b[a-f0-9]{40}\b/i;
+const sha256 = /\b[A-Fa-f0-9]{64}\b/i;
 
 async function run() {
   try {
     const allowlist = core.getInput('allowlist');
-    const isDryRun = core.getInput('dry_run') === 'true' ? true : false;
+    const isDryRun = core.getInput('dry_run') === 'true';
     const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
     const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
     let actionHasError = false;
@@ -13640,7 +13634,7 @@ async function run() {
         const steps = jobs[job]['steps'];
 
         if (assertUsesVersion(uses)) {
-          if (!assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
+          if (!assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist)) {
             actionHasError = true;
             fileHasError = true;
 
@@ -13650,7 +13644,7 @@ async function run() {
           for (const step of steps) {
             const uses = step['uses'];
 
-            if (assertUsesVersion(uses) && !assertUsesSHA(uses) && !assertUsesAllowlist(uses, allowlist)) {
+            if (assertUsesVersion(uses) && !assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist)) {
               actionHasError = true;
               fileHasError = true;
 
@@ -13683,7 +13677,11 @@ function assertUsesVersion(uses) {
   return typeof uses === 'string' && uses.includes('@');
 }
 
-function assertUsesSHA(uses) {
+function assertUsesSha(uses) {
+  if (uses.startsWith('docker://')) {
+    return sha256.test(uses.substr(uses.indexOf('sha256:') + 7));
+  }
+
   return sha1.test(uses.substr(uses.indexOf('@') + 1));
 }
 
