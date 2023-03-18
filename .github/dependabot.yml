@@ -11,13 +11,3 @@ updates:
     schedule:
       interval: "monthly"
       day: "saturday"
-    allow:
-      - dependency-type: "development"
-
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-    allow:
-      - dependency-type: "production"
