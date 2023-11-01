@@ -28,12 +28,12 @@ jobs:
       id: get-runs-using-version
       uses: zgosalvez/github-actions-get-action-runs-using-version@63efe948953617d47dad79e8c7cf05964eb7a9ba
     - name: Set up Node
-      uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8
+      uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
       with:
         node-version: v${{ steps.get-runs-using-version.outputs.version }}
     - name: Cache Node Packages
       id: node-cache
-      uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
+      uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
       with:
         path: ~/.npm
         key: node-cache-${{ steps.get-runs-using-version.outputs.prop }}-${{ hashFiles('**/package-lock.json') }}
