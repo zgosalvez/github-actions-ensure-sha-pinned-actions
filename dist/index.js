@@ -13632,27 +13632,21 @@ async function run() {
       for (const job in jobs) {
         const uses = jobs[job]['uses'];
         const steps = jobs[job]['steps'];
+        let jobHasError = false;
 
-        if (assertUsesVersion(uses)) {
-          if (!assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist)) {
-            actionHasError = true;
-            fileHasError = true;
-
-            reportError(`${uses} is not pinned to a full length commit SHA.`, isDryRun);
-          }
+        if (uses !== undefined) {
+          jobHasError = runAssertions(uses, allowlist, isDryRun);
         } else if (steps !== undefined) {
           for (const step of steps) {
-            const uses = step['uses'];
-
-            if (assertUsesVersion(uses) && !assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist)) {
-              actionHasError = true;
-              fileHasError = true;
-
-              reportError(`${uses} is not pinned to a full length commit SHA.`, isDryRun);
-            }
+            jobHasError = runAssertions(step['uses'], allowlist, isDryRun);
           }
         } else {
-          core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);
+          core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);  
+        }
+
+        if (jobHasError) {
+          actionHasError = true;
+          fileHasError = true;
         }
       }
 
@@ -13700,14 +13694,18 @@ function assertUsesAllowlist(uses, allowlist) {
   return isAllowed;
 }
 
-function reportError(message, isDryRun) {
+function runAssertions(uses, allowlist, isDryRun) {
+  const hasError = assertUsesVersion(uses) && !assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist);
+  const message = `${uses} is not pinned to a full length commit SHA.`;
+
   if (isDryRun) {
     core.warning(message);
   } else {
     core.error(message);
   }
-}
 
+  return hasError;
+}
 })();
 
 module.exports = __webpack_exports__;

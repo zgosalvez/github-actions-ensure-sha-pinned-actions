@@ -18,11 +18,14 @@ jest.afterEach(() => {
 });
 
 jest.test('actions pass', () => {
-    try {
-        const result = execSync(`node ${ip}`, { env: process.env }).toString();
+    let result;
 
-        jest.expect(result).toContain('No issues were found.');
+    try {
+        result = execSync(`node ${ip}`, { env: process.env }).toString();
     } catch (error) {
         throw Error(error.stdout.toString());
     }
+
+    jest.expect(result).not.toContain('::warning::');
+    jest.expect(result).toContain('No issues were found.');
 });
