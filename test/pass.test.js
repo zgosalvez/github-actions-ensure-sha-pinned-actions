@@ -27,5 +27,6 @@ jest.test('actions pass', () => {
     }
 
     jest.expect(result).not.toContain('::warning::');
+    jest.expect(result).not.toContain('::error::');
     jest.expect(result).toContain('No issues were found.');
 });

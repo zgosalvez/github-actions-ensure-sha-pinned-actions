@@ -95,12 +95,15 @@ function assertUsesAllowlist(uses, allowlist) {
 
 function runAssertions(uses, allowlist, isDryRun) {
   const hasError = assertUsesVersion(uses) && !assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist);
-  const message = `${uses} is not pinned to a full length commit SHA.`;
 
-  if (isDryRun) {
-    core.warning(message);
-  } else {
-    core.error(message);
+  if (hasError) {
+    const message = `${uses} is not pinned to a full length commit SHA.`;
+
+    if (isDryRun) {
+      core.warning(message);
+    } else {
+      core.error(message);
+    }
   }
 
   return hasError;
