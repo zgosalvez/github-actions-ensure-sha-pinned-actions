@@ -5,6 +5,7 @@ jobs:
   unversionedstub:
     steps:
     - uses: ./.github/actions/playground
+    - uses: ./
   allowlistedstub:
     steps:
     - uses: aws-actions/amazon-ecr-login@v1
