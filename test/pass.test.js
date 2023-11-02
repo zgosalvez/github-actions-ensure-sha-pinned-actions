@@ -1,5 +1,5 @@
 const process = require('process');
-const cp = require('child_process');
+const {execSync} = require('child_process');
 const jest = require('@jest/globals');
 const path = require('path');
 
@@ -18,7 +18,11 @@ jest.afterEach(() => {
 });
 
 jest.test('actions pass', () => {
-    const result = cp.execSync(`node ${ip}`, { env: process.env }).toString();
+    try {
+        const result = execSync(`node ${ip}`, { env: process.env }).toString();
 
-    jest.expect(result).toContain('No issues were found.');
+        jest.expect(result).toContain('No issues were found.');
+    } catch (error) {
+        throw Error(error.stdout.toString());
+    }
 });
