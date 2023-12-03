@@ -37,7 +37,7 @@ async function run() {
           jobHasError = runAssertions(uses, allowlist, isDryRun);
         } else if (steps !== undefined) {
           for (const step of steps) {
-            jobHasError = runAssertions(step['uses'], allowlist, isDryRun);
+            jobHasError ||= runAssertions(step['uses'], allowlist, isDryRun);
           }
         } else {
           core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);  
