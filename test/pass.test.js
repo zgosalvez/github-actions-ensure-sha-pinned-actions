@@ -21,9 +21,9 @@ jest.test('actions pass', () => {
     let result;
 
     try {
-        result = execSync(`node ${ip}`, { env: process.env }).toString();
+        throw execSync(`node ${ip}`, { env: process.env }).toString();
     } catch (error) {
-        throw Error(error.stdout.toString());
+        result = (error.stdout || error).toString();
     }
 
     jest.expect(result).not.toContain('::warning::');

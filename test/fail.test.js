@@ -12,30 +12,28 @@ jest.afterEach(() => {
 
 jest.test('action has empty error', () => {
     process.env[workflowsPath] = 'test/stub/empty';
+    let result;
 
     try {
-        cp.execSync(`node ${ip}`, { env: process.env }).toString();
-
-        jest.expect(true).toBe(false);
+        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
     } catch (error) {
-        const result = error.stdout.toString();
-
-        jest.expect(result).toContain('Cannot read properties of null (reading \'jobs\')');
-        jest.expect(result).not.toContain('No issues were found.');
+        result = (error.stdout || error).toString();
     }
+
+    jest.expect(result).toContain('Cannot read properties of null (reading \'jobs\')');
+    jest.expect(result).not.toContain('No issues were found.');
 });
 
 jest.test('action has unpinned error', () => {
     process.env[workflowsPath] = 'test/stub/unpinned';
+    let result;
 
     try {
-        cp.execSync(`node ${ip}`, { env: process.env }).toString();
-
-        jest.expect(true).toBe(false);
+        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
     } catch (error) {
-        const result = error.stdout.toString();
-
-        jest.expect(result).toContain('actions/checkout@v1 is not pinned to a full length commit SHA.');
-        jest.expect(result).not.toContain('No issues were found.');
+        result = (error.stdout || error).toString();
     }
+
+    jest.expect(result).toContain('actions/checkout@v1 is not pinned to a full length commit SHA.');
+    jest.expect(result).not.toContain('No issues were found.');
 });
