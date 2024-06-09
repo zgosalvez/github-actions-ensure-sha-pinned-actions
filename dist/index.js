@@ -30653,6 +30653,7 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, startOnN
     let hasNewline = false;
     let hasNewlineAfterProp = false;
     let reqSpace = false;
+    let tab = null;
     let anchor = null;
     let tag = null;
     let comma = null;
@@ -30666,6 +30667,12 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, startOnN
                 onError(token.offset, 'MISSING_CHAR', 'Tags and anchors must be separated from the next token by white space');
             reqSpace = false;
         }
+        if (tab) {
+            if (token.type !== 'comment') {
+                onError(tab, 'TAB_AS_INDENT', 'Tabs are not allowed as indentation');
+            }
+            tab = null;
+        }
         switch (token.type) {
             case 'space':
                 // At the doc level, tabs at line start may be parsed
@@ -30673,9 +30680,10 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, startOnN
                 // In a flow collection, only the parser handles indent.
                 if (!flow &&
                     atNewline &&
-                    indicator !== 'doc-start' &&
-                    token.source[0] === '\t')
-                    onError(token, 'TAB_AS_INDENT', 'Tabs are not allowed as indentation');
+                    (indicator !== 'doc-start' || next?.type !== 'flow-collection') &&
+                    token.source[0] === '\t') {
+                    tab = token;
+                }
                 hasSpace = true;
                 break;
             case 'comment': {
@@ -30761,8 +30769,11 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, startOnN
         next.type !== 'space' &&
         next.type !== 'newline' &&
         next.type !== 'comma' &&
-        (next.type !== 'scalar' || next.source !== ''))
+        (next.type !== 'scalar' || next.source !== '')) {
         onError(next.offset, 'MISSING_CHAR', 'Tags and anchors must be separated from the next token by white space');
+    }
+    if (tab)
+        onError(tab, 'TAB_AS_INDENT', 'Tabs are not allowed as indentation');
     return {
         comma,
         found,
@@ -33360,11 +33371,11 @@ function isEmpty(ch) {
             return false;
     }
 }
-const hexDigits = '0123456789ABCDEFabcdef'.split('');
-const tagChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-#;/?:@&=+$_.!~*'()".split('');
-const invalidFlowScalarChars = ',[]{}'.split('');
-const invalidAnchorChars = ' ,[]{}\n\r\t'.split('');
-const isNotAnchorChar = (ch) => !ch || invalidAnchorChars.includes(ch);
+const hexDigits = new Set('0123456789ABCDEFabcdef');
+const tagChars = new Set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-#;/?:@&=+$_.!~*'()");
+const flowIndicatorChars = new Set(',[]{}');
+const invalidAnchorChars = new Set(' ,[]{}\n\r\t');
+const isNotAnchorChar = (ch) => !ch || invalidAnchorChars.has(ch);
 /**
  * Splits an input string into lexical tokens, i.e. smaller strings that are
  * easily identifiable by `tokens.tokenType()`.
@@ -33430,6 +33441,8 @@ class Lexer {
      */
     *lex(source, incomplete = false) {
         if (source) {
+            if (typeof source !== 'string')
+                throw TypeError('source is not a string');
             this.buffer = this.buffer ? this.buffer + source : source;
             this.lineEndPos = null;
         }
@@ -33529,11 +33542,16 @@ class Lexer {
         }
         if (line[0] === '%') {
             let dirEnd = line.length;
-            const cs = line.indexOf('#');
-            if (cs !== -1) {
+            let cs = line.indexOf('#');
+            while (cs !== -1) {
                 const ch = line[cs - 1];
-                if (ch === ' ' || ch === '\t')
+                if (ch === ' ' || ch === '\t') {
                     dirEnd = cs - 1;
+                    break;
+                }
+                else {
+                    cs = line.indexOf('#', cs + 1);
+                }
             }
             while (true) {
                 const ch = line[dirEnd - 1];
@@ -33799,8 +33817,10 @@ class Lexer {
         if (indent >= this.indentNext) {
             if (this.blockScalarIndent === -1)
                 this.indentNext = indent;
-            else
-                this.indentNext += this.blockScalarIndent;
+            else {
+                this.indentNext =
+                    this.blockScalarIndent + (this.indentNext === 0 ? 1 : this.indentNext);
+            }
             do {
                 const cs = this.continueScalar(nl + 1);
                 if (cs === -1)
@@ -33840,7 +33860,7 @@ class Lexer {
         while ((ch = this.buffer[++i])) {
             if (ch === ':') {
                 const next = this.buffer[i + 1];
-                if (isEmpty(next) || (inFlow && next === ','))
+                if (isEmpty(next) || (inFlow && flowIndicatorChars.has(next)))
                     break;
                 end = i;
             }
@@ -33855,7 +33875,7 @@ class Lexer {
                     else
                         end = i;
                 }
-                if (next === '#' || (inFlow && invalidFlowScalarChars.includes(next)))
+                if (next === '#' || (inFlow && flowIndicatorChars.has(next)))
                     break;
                 if (ch === '\n') {
                     const cs = this.continueScalar(i + 1);
@@ -33865,7 +33885,7 @@ class Lexer {
                 }
             }
             else {
-                if (inFlow && invalidFlowScalarChars.includes(ch))
+                if (inFlow && flowIndicatorChars.has(ch))
                     break;
                 end = i;
             }
@@ -33910,7 +33930,7 @@ class Lexer {
             case ':': {
                 const inFlow = this.flowLevel > 0;
                 const ch1 = this.charAt(1);
-                if (isEmpty(ch1) || (inFlow && invalidFlowScalarChars.includes(ch1))) {
+                if (isEmpty(ch1) || (inFlow && flowIndicatorChars.has(ch1))) {
                     if (!inFlow)
                         this.indentNext = this.indentValue + 1;
                     else if (this.flowKey)
@@ -33935,11 +33955,11 @@ class Lexer {
             let i = this.pos + 1;
             let ch = this.buffer[i];
             while (ch) {
-                if (tagChars.includes(ch))
+                if (tagChars.has(ch))
                     ch = this.buffer[++i];
                 else if (ch === '%' &&
-                    hexDigits.includes(this.buffer[i + 1]) &&
-                    hexDigits.includes(this.buffer[i + 2])) {
+                    hexDigits.has(this.buffer[i + 1]) &&
+                    hexDigits.has(this.buffer[i + 2])) {
                     ch = this.buffer[(i += 3)];
                 }
                 else
@@ -34347,7 +34367,7 @@ class Parser {
                     }
                     else {
                         Object.assign(it, { key: token, sep: [] });
-                        this.onKeyLine = !includesToken(it.start, 'explicit-key-ind');
+                        this.onKeyLine = !it.explicitKey;
                         return;
                     }
                     break;
@@ -34556,9 +34576,9 @@ class Parser {
                 return;
         }
         if (this.indent >= map.indent) {
-            const atNextItem = !this.onKeyLine &&
-                this.indent === map.indent &&
-                it.sep &&
+            const atMapIndent = !this.onKeyLine && this.indent === map.indent;
+            const atNextItem = atMapIndent &&
+                (it.sep || it.explicitKey) &&
                 this.type !== 'seq-item-ind';
             // For empty nodes, assign newline-separated not indented empty tokens to following node
             let start = [];
@@ -34599,25 +34619,26 @@ class Parser {
                     }
                     return;
                 case 'explicit-key-ind':
-                    if (!it.sep && !includesToken(it.start, 'explicit-key-ind')) {
+                    if (!it.sep && !it.explicitKey) {
                         it.start.push(this.sourceToken);
+                        it.explicitKey = true;
                     }
                     else if (atNextItem || it.value) {
                         start.push(this.sourceToken);
-                        map.items.push({ start });
+                        map.items.push({ start, explicitKey: true });
                     }
                     else {
                         this.stack.push({
                             type: 'block-map',
                             offset: this.offset,
                             indent: this.indent,
-                            items: [{ start: [this.sourceToken] }]
+                            items: [{ start: [this.sourceToken], explicitKey: true }]
                         });
                     }
                     this.onKeyLine = true;
                     return;
                 case 'map-value-ind':
-                    if (includesToken(it.start, 'explicit-key-ind')) {
+                    if (it.explicitKey) {
                         if (!it.sep) {
                             if (includesToken(it.start, 'newline')) {
                                 Object.assign(it, { key: null, sep: [this.sourceToken] });
@@ -34708,9 +34729,7 @@ class Parser {
                 default: {
                     const bv = this.startBlockValue(map);
                     if (bv) {
-                        if (atNextItem &&
-                            bv.type !== 'block-seq' &&
-                            includesToken(it.start, 'explicit-key-ind')) {
+                        if (atMapIndent && bv.type !== 'block-seq') {
                             map.items.push({ start });
                         }
                         this.stack.push(bv);
@@ -34931,7 +34950,7 @@ class Parser {
                     type: 'block-map',
                     offset: this.offset,
                     indent: this.indent,
-                    items: [{ start }]
+                    items: [{ start, explicitKey: true }]
                 };
             }
             case 'map-value-ind': {
@@ -35303,7 +35322,7 @@ const floatNaN = {
     identify: value => typeof value === 'number',
     default: true,
     tag: 'tag:yaml.org,2002:float',
-    test: /^(?:[-+]?\.(?:inf|Inf|INF|nan|NaN|NAN))$/,
+    test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
     resolve: str => str.slice(-3).toLowerCase() === 'nan'
         ? NaN
         : str[0] === '-'
@@ -35720,7 +35739,7 @@ const floatNaN = {
     identify: value => typeof value === 'number',
     default: true,
     tag: 'tag:yaml.org,2002:float',
-    test: /^[-+]?\.(?:inf|Inf|INF|nan|NaN|NAN)$/,
+    test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
     resolve: (str) => str.slice(-3).toLowerCase() === 'nan'
         ? NaN
         : str[0] === '-'
@@ -36912,7 +36931,7 @@ function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
         if (keyComment) {
             throw new Error('With simple keys, key nodes cannot have comments');
         }
-        if (identity.isCollection(key)) {
+        if (identity.isCollection(key) || (!identity.isNode(key) && typeof key === 'object')) {
             const msg = 'With simple keys, collection cannot be used as a key value';
             throw new Error(msg);
         }
