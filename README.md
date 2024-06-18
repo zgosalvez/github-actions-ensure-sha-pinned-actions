@@ -19,7 +19,9 @@ For more information on these inputs, see the [Workflow syntax for GitHub Action
 - `dry_run`: Set to `true` to show warnings instead of failing. Optional. Default: `false` (fail on any error)
 
 ### Outputs
-None. This action will throw an error if it finds GitHub Actions that are not pinned to full length commit SHAs.
+None. This action will throw an error if it finds any GitHub Action that is not pinned to a full length commit SHAs.
+
+*Note:* Only the first error encountered will be reported.
 
 ### Common workflow
 
