@@ -26,9 +26,9 @@ jobs:
         ref: ${{ github.head_ref }} # https://github.com/stefanzweifel/git-auto-commit-action#checkout-the-correct-branch
     - name: Get runs.using version
       id: get-runs-using-version
-      uses: zgosalvez/github-actions-get-action-runs-using-version@981210d5388c2c51114d5ff707dd11dfe846c32c
+      uses: zgosalvez/github-actions-get-action-runs-using-version@a2a6bfee23ba3314418fed5e8d0ca3367d7fed44
     - name: Set up Node
-      uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+      uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a
       with:
         node-version: v${{ steps.get-runs-using-version.outputs.version }}
     - name: Cache Node Packages
@@ -48,6 +48,6 @@ jobs:
       run: npm run test
     - name: Prepare
       run: npm run prepare
-    - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842
+    - uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79
       with:
         commit_message: Apply `npm run prepare` changes
