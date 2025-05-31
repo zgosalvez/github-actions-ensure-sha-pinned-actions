@@ -37,8 +37,9 @@ async function run() {
           jobHasError = runAssertions(uses, allowlist, isDryRun);
         } else if (steps !== undefined) {
           for (const step of steps) {
-            if (!jobHasError) {
-              jobHasError = runAssertions(step['uses'], allowlist, isDryRun);
+            stepHasError = runAssertions(step['uses'], allowlist, isDryRun);
+            if (stepHasError) {
+              jobHasError = true;
             }
           }
         } else {
