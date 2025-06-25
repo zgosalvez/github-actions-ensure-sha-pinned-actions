@@ -38645,11 +38645,15 @@ async function run() {
   try {
     const allowlist = core.getInput('allowlist');
     const isDryRun = core.getInput('dry_run') === 'true';
-    const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
-    const globber = await glob.create([workflowsPath + '/*.yaml', workflowsPath + '/*.yml'].join('\n'));
-    let actionHasError = false;
+    let hasError = false;
 
-    for await (const file of globber.globGenerator()) {
+    const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
+    const workflowsGlobber = await glob.create([
+      workflowsPath + '/*.yaml',
+      workflowsPath + '/*.yml'
+    ].join('\n'));
+
+    for await (const file of workflowsGlobber.globGenerator()) {
       const basename = path.basename(file);
       const fileContents = fs.readFileSync(file, 'utf8');
       const yamlContents = yaml.parse(fileContents);
@@ -38676,12 +38680,53 @@ async function run() {
             }
           }
         } else {
-          core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);  
+          core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);
         }
 
         if (jobHasError) {
-          actionHasError = true;
+          hasError = true;
           fileHasError = true;
+        }
+      }
+
+      if (!fileHasError) {
+        core.info('No issues were found.');
+      }
+
+      core.endGroup();
+    }
+
+    const actionsPath = process.env['ZG_ACTIONS_PATH'] || '.github/actions';
+    const actionsGlobber = await glob.create([
+      actionsPath + '/*/action.yaml',
+      actionsPath + '/*/action.yml'
+    ].join('\n'));
+
+    for await (const file of actionsGlobber.globGenerator()) {
+      const basename = path.basename(path.dirname(file));
+      const fileContents = fs.readFileSync(file, 'utf8');
+      const yamlContents = yaml.parse(fileContents);
+      const runs = yamlContents['runs'];
+      let fileHasError = false;
+
+      if (runs === undefined) {
+        core.setFailed(`The "${basename}" action does not contain runs.`);
+      }
+
+      core.startGroup(actionsPath + '/' + basename);
+
+      const steps = runs['steps'];
+      let runHasError = false;
+
+      if (steps !== undefined) {
+        for (const step of steps) {
+          if (!runHasError) {
+            runHasError = runAssertions(step['uses'], allowlist, isDryRun);
+          }
+          if (runHasError) {
+            hasError = true;
+            fileHasError = true;
+          }
         }
       }
 
@@ -38692,8 +38737,8 @@ async function run() {
       core.endGroup();
     }
 
-    if (!isDryRun && actionHasError) {
-      throw new Error('At least one workflow contains an unpinned GitHub Action version.');
+    if (!isDryRun && hasError) {
+      throw new Error('At least one workflow or composite action contains an unpinned GitHub Action version.');
     }
   } catch (error) {
     core.setFailed(error.message);
@@ -38723,7 +38768,7 @@ function assertUsesAllowlist(uses, allowlist) {
   const isAllowed = allowlist.split(/\r?\n/).some((allow) => action.startsWith(allow));
 
   if(isAllowed) {
-    core.info(`${action} matched allowlist — ignoring action.`)
+    core.info(`${action} matched allowlist — ignoring action.`);
   }
 
   return isAllowed;

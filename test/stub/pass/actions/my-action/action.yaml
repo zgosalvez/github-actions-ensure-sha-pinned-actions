@@ -1,0 +1,18 @@
+runs:
+  using: composite
+  steps:
+    - id: versionedstub
+      uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+    - id: usesunversionedstub
+      uses: ./.github/actions/playground
+    - id: unversionedstub
+      uses: ./.github/actions/playground
+    - id: unversionedstub_all
+      uses: ./
+    - id: allowlistedstub
+      uses: aws-actions/amazon-ecr-login@v1
+    - id: dockerstub
+      uses: docker://rhysd/actionlint@sha256:5f957b2a08d223e48133e1a914ed046bea12e578fe2f6ae4de47fdbe691a2468
+    - name: echo hello world
+      shell: bash
+      run: echo "hello world"
