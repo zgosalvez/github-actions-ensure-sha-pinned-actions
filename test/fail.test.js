@@ -27,7 +27,36 @@ jest.test('workflow has empty error', () => {
         result = (error.stdout || error).toString();
     }
 
-    jest.expect(result).toContain('Cannot read properties of null (reading \'jobs\')');
+    jest.expect(result).toContain('The \"file.yml\" workflow does not contain jobs');
+    jest.expect(result).not.toContain('No issues were found.');
+});
+
+jest.test('workflow has invalid error', () => {
+    process.env[workflowsPath] = 'test/stub/invalid/workflows';
+    let result;
+
+    try {
+        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+    } catch (error) {
+        result = (error.stdout || error).toString();
+    }
+
+    jest.expect(result).toContain('The \"workflow-confused-with-action.yml\" workflow does not contain jobs');
+    jest.expect(result).not.toContain('No issues were found.');
+});
+
+jest.test('workflow has invalid job error', () => {
+    process.env[workflowsPath] = 'test/stub/invalid/workflows2';
+    let result;
+
+    try {
+        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+    } catch (error) {
+        result = (error.stdout || error).toString();
+    }
+
+    jest.expect(result).toContain('The \"invalid-workflow-job\" job of the \"invalid-job.yml\" workflow is undefined');
+    jest.expect(result).toContain('The \"invalid-workflow-job2\" job of the \"invalid-job.yml\" workflow does not contain uses or steps');
     jest.expect(result).not.toContain('No issues were found.');
 });
 
@@ -55,9 +84,24 @@ jest.test('action has empty error', () => {
         result = (error.stdout || error).toString();
     }
 
-    jest.expect(result).toContain('Cannot read properties of null (reading \'runs\')');
+    jest.expect(result).toContain('The \"my-action\" action does not contain runs');
     jest.expect(result).not.toContain('No issues were found.');
 });
+
+jest.test('action has empty error', () => {
+    process.env[actionsPath] = 'test/stub/invalid/actions';
+    let result;
+
+    try {
+        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+    } catch (error) {
+        result = (error.stdout || error).toString();
+    }
+
+    jest.expect(result).toContain('The \"action-confused-with-workflow\" action does not contain runs');
+    jest.expect(result).not.toContain('No issues were found.');
+});
+
 
 jest.test('action has unpinned error', () => {
     process.env[actionsPath] = 'test/stub/unpinned/actions';

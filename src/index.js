@@ -23,30 +23,36 @@ async function run() {
       const basename = path.basename(file);
       const fileContents = fs.readFileSync(file, 'utf8');
       const yamlContents = yaml.parse(fileContents);
-      const jobs = yamlContents['jobs'];
       let fileHasError = false;
 
-      if (jobs === undefined) {
+      let jobs = getYamlAttribute(yamlContents, 'jobs');
+      if (jobs === undefined || jobs === null) {
         core.setFailed(`The "${basename}" workflow does not contain jobs.`);
+        break;
       }
 
       core.startGroup(workflowsPath + '/' + basename);
 
       for (const job in jobs) {
-        const uses = jobs[job]['uses'];
-        const steps = jobs[job]['steps'];
+        jobObject = jobs[job];
         let jobHasError = false;
-
-        if (uses !== undefined) {
-          jobHasError = runAssertions(uses, allowlist, isDryRun);
-        } else if (steps !== undefined) {
-          for (const step of steps) {
-            if (!jobHasError) {
-              jobHasError = runAssertions(step['uses'], allowlist, isDryRun);
-            }
-          }
+        if (jobObject === undefined || jobObject === null) {
+          core.warning(`The "${job}" job of the "${basename}" workflow is undefined.`);
+          jobHasError = true;
         } else {
-          core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);
+          const uses = getYamlAttribute(jobObject, "uses");
+          const steps = getYamlAttribute(jobObject, "steps");
+          if (uses !== undefined && uses !== null) {
+            jobHasError = runAssertions(uses, allowlist, isDryRun);
+          } else if (steps !== undefined && steps !== null) {
+            for (const step of steps) {
+              if (!jobHasError) {
+                jobHasError = runAssertions(step['uses'], allowlist, isDryRun);
+              }
+            }
+          } else {
+            core.warning(`The "${job}" job of the "${basename}" workflow does not contain uses or steps.`);
+          }
         }
 
         if (jobHasError) {
@@ -72,27 +78,27 @@ async function run() {
       const basename = path.basename(path.dirname(file));
       const fileContents = fs.readFileSync(file, 'utf8');
       const yamlContents = yaml.parse(fileContents);
-      const runs = yamlContents['runs'];
       let fileHasError = false;
 
-      if (runs === undefined) {
+      let runs = getYamlAttribute(yamlContents, 'runs');
+      if (runs === undefined || runs === null) {
         core.setFailed(`The "${basename}" action does not contain runs.`);
+        break;
       }
 
       core.startGroup(actionsPath + '/' + basename);
 
-      const steps = runs['steps'];
       let runHasError = false;
-
-      if (steps !== undefined) {
+      const steps = getYamlAttribute(runs, 'steps');
+      if (steps !== undefined && steps !== null) {
         for (const step of steps) {
           if (!runHasError) {
             runHasError = runAssertions(step['uses'], allowlist, isDryRun);
           }
-          if (runHasError) {
-            hasError = true;
-            fileHasError = true;
-          }
+        }
+        if (runHasError) {
+          hasError = true;
+          fileHasError = true;
         }
       }
 
@@ -112,6 +118,13 @@ async function run() {
 }
 
 run();
+
+function getYamlAttribute(yamlContents, attribute) {
+  if (yamlContents && typeof yamlContents === 'object' && Object.prototype.hasOwnProperty.call(yamlContents, attribute)) {
+    return yamlContents[attribute];
+  }
+  return undefined;
+}
 
 function assertUsesVersion(uses) {
   return typeof uses === 'string' && uses.includes('@');
