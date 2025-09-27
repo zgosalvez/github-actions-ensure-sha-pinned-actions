@@ -5,15 +5,18 @@ const path = require('path');
 
 const ip = path.join(__dirname, '../src/index.js');
 const workflowsPath = 'ZG_WORKFLOWS_PATH';
+const actionsPath = 'ZG_ACTIONS_PATH';
 const allowlist = 'INPUT_ALLOWLIST';
 
 jest.beforeEach(() => {
-    process.env[workflowsPath] = 'test/stub/pass';
+    process.env[workflowsPath] = 'test/stub/pass/workflows';
+    process.env[actionsPath] = 'test/stub/pass/actions';
     process.env[allowlist] = "aws-actions/\ndocker/login-action";
 });
 
 jest.afterEach(() => {
     delete process.env[workflowsPath];
+    delete process.env[actionsPath];
     delete process.env[allowlist];
 });
 
