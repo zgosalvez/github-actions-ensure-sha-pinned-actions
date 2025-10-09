@@ -14,14 +14,14 @@ async function run() {
     let hasError = false;
 
     const workflowsPath = process.env['ZG_WORKFLOWS_PATH'] || '.github/workflows';
-    const workflowsGlobber = await glob.create([
-      workflowsPath + '/*.yaml',
-      workflowsPath + '/*.yml'
-    ].join('\n'));
+    const workflowNameInput = (core.getInput('workflow_name') || 'all').trim();
+    const workflowsToCheck = await resolveWorkflowTargets({ workflowsPath, workflowNameInput });
 
-    for await (const file of workflowsGlobber.globGenerator()) {
-      const basename = path.basename(file);
-      const fileContents = fs.readFileSync(file, 'utf8');
+    for (const file of workflowsToCheck) {
+      const normalizedFile = normalizePath(file);
+      const basename = path.basename(normalizedFile);
+      const displayPath = path.relative(process.cwd(), normalizedFile);
+      const fileContents = fs.readFileSync(normalizedFile, 'utf8');
       const yamlContents = yaml.parse(fileContents);
       let fileHasError = false;
 
@@ -31,10 +31,10 @@ async function run() {
         break;
       }
 
-      core.startGroup(workflowsPath + '/' + basename);
+      core.startGroup(displayPath);
 
       for (const job in jobs) {
-        jobObject = jobs[job];
+        const jobObject = jobs[job];
         let jobHasError = false;
         if (jobObject === undefined || jobObject === null) {
           core.warning(`The "${job}" job of the "${basename}" workflow is undefined.`);
@@ -118,6 +118,82 @@ async function run() {
 }
 
 run();
+
+async function collectWorkflowFiles(workflowsPath) {
+  const globber = await glob.create([
+    workflowsPath + '/*.yaml',
+    workflowsPath + '/*.yml'
+  ].join('\n'));
+
+  const files = [];
+  for await (const file of globber.globGenerator()) {
+    files.push(normalizePath(file));
+  }
+
+  return files;
+}
+
+async function resolveWorkflowTargets({ workflowsPath, workflowNameInput }) {
+  const normalizedWorkflowsPath = normalizePath(workflowsPath);
+  const workflowSelection = workflowNameInput ? workflowNameInput.trim() : 'all';
+
+  if (workflowSelection.length === 0 || workflowSelection.toLowerCase() === 'all') {
+    return collectWorkflowFiles(workflowsPath);
+  }
+
+  const candidatePaths = buildWorkflowCandidatePaths({
+    workflowsPath: normalizedWorkflowsPath,
+    workflowSelection
+  });
+  const existingPath = candidatePaths.find((candidate) => fileExists(candidate));
+
+  if (!existingPath) {
+    throw new Error(`Unable to locate workflow file "${workflowSelection}" under ${normalizedWorkflowsPath}.`);
+  }
+
+  return [normalizePath(existingPath)];
+}
+
+function buildWorkflowCandidatePaths({ workflowsPath, workflowSelection }) {
+  const selectionIsAbsolute = path.isAbsolute(workflowSelection);
+  const basePath = selectionIsAbsolute ? workflowSelection : path.join(workflowsPath, workflowSelection);
+  const normalizedBase = normalizePath(basePath);
+  const candidates = [normalizedBase];
+
+  if (!normalizedBase.endsWith('.yml') && !normalizedBase.endsWith('.yaml')) {
+    candidates.push(`${normalizedBase}.yml`);
+    candidates.push(`${normalizedBase}.yaml`);
+  }
+
+  return candidates.map((candidate) => validateWorkflowPath(candidate, workflowsPath));
+}
+
+function validateWorkflowPath(candidatePath, workflowsPath) {
+  const normalizedCandidate = normalizePath(candidatePath);
+  const normalizedWorkflowsDir = normalizePath(workflowsPath);
+
+  if (!normalizedCandidate.startsWith(normalizedWorkflowsDir + path.sep)) {
+    throw new Error(`workflow_name must reference a file within ${normalizedWorkflowsDir}.`);
+  }
+
+  return normalizedCandidate;
+}
+
+function fileExists(filePath) {
+  try {
+    return fs.existsSync(filePath) && fs.statSync(filePath).isFile();
+  } catch (error) {
+    return false;
+  }
+}
+
+function normalizePath(filePath) {
+  if (!filePath) {
+    return filePath;
+  }
+
+  return path.normalize(path.isAbsolute(filePath) ? filePath : path.resolve(filePath));
+}
 
 function getYamlAttribute(yamlContents, attribute) {
   if (yamlContents && typeof yamlContents === 'object' && Object.prototype.hasOwnProperty.call(yamlContents, attribute)) {

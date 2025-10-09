@@ -6,15 +6,18 @@ const path = require('path');
 const ip = path.join(__dirname, '../src/index.js');
 const workflowsPath = 'ZG_WORKFLOWS_PATH';
 const actionsPath = 'ZG_ACTIONS_PATH';
+const workflowNameInput = 'INPUT_WORKFLOW_NAME';
 
 jest.beforeEach(() => {
     process.env[workflowsPath] = 'foo';
     process.env[actionsPath] = 'foo';
+    delete process.env[workflowNameInput];
 });
 
 jest.afterEach(() => {
     delete process.env[workflowsPath];
     delete process.env[actionsPath];
+    delete process.env[workflowNameInput];
 });
 
 jest.test('workflow has empty error', () => {
@@ -115,4 +118,34 @@ jest.test('action has unpinned error', () => {
 
     jest.expect(result).toContain('actions/checkout@v3 is not pinned to a full length commit SHA.');
     jest.expect(result).not.toContain('No issues were found.');
+});
+
+jest.test('workflow_name missing file throws error', () => {
+    process.env[workflowsPath] = 'test/stub/pass/workflows';
+    process.env[workflowNameInput] = 'missing-workflow';
+    let result;
+
+    try {
+        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+    } catch (error) {
+        result = (error.stdout || error).toString();
+    }
+
+    jest.expect(result).toContain('Unable to locate workflow file "missing-workflow"');
+    jest.expect(result).toContain('::error::');
+});
+
+jest.test('workflow_name prevents directory traversal', () => {
+    process.env[workflowsPath] = 'test/stub/pass/workflows';
+    process.env[workflowNameInput] = '../outside';
+    let result;
+
+    try {
+        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+    } catch (error) {
+        result = (error.stdout || error).toString();
+    }
+
+    jest.expect(result).toContain('workflow_name must reference a file within');
+    jest.expect(result).toContain('::error::');
 });
