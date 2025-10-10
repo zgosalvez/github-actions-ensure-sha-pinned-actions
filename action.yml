@@ -15,3 +15,6 @@ inputs:
   dry_run:
     description: 'Set to `true` to show warnings instead of failing. Optional. Default: `false` (fail on any error)'
     default: false
+  workflow_name:
+    description: 'Set to `all` to scan every workflow or provide a workflow file name under .github/workflows to scan only that file. Optional. Default: `all`'
+    default: all
