@@ -79,7 +79,7 @@ jest.test('action has empty error', () => {
     let result;
 
     try {
-        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+        throw cp.execFileSync('node', [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
@@ -93,7 +93,7 @@ jest.test('action has empty error', () => {
     let result;
 
     try {
-        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+        throw cp.execFileSync('node', [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
@@ -108,7 +108,7 @@ jest.test('action has unpinned error', () => {
     let result;
 
     try {
-        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+        throw cp.execFileSync('node', [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
