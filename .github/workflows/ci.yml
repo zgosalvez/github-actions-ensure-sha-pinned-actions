@@ -9,6 +9,8 @@ jobs:
   security_hardening:
     name: Check security hardening
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - name: Clone the repository
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
@@ -19,6 +21,8 @@ jobs:
     name: Build & Test
     needs: security_hardening
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Clone the repository
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
