@@ -10,8 +10,8 @@ let glob;
 
 async function run() {
   try {
-    core = require('@actions/core');
-    glob = require('@actions/glob');
+    core = await import('@actions/core');
+    glob = await import('@actions/glob');
     
     const allowlist = core.getInput('allowlist');
     const isDryRun = core.getInput('dry_run') === 'true';
