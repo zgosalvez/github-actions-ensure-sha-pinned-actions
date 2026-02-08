@@ -1,4 +1,3 @@
-const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('yaml');
@@ -6,9 +5,14 @@ const yaml = require('yaml');
 const sha1 = /\b[a-f0-9]{40}\b/i;
 const sha256 = /\b[A-Fa-f0-9]{64}\b/i;
 
+let core;
+let glob;
+
 async function run() {
   try {
-    const glob = await import('@actions/glob');
+    core = await import('@actions/core');
+    glob = await import('@actions/glob');
+    
     const allowlist = core.getInput('allowlist');
     const isDryRun = core.getInput('dry_run') === 'true';
     let hasError = false;
