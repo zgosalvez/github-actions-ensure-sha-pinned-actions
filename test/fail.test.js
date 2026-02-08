@@ -22,7 +22,7 @@ jest.test('workflow has empty error', () => {
     let result;
 
     try {
-        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+        throw cp.execFileSync('node', [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
@@ -36,7 +36,7 @@ jest.test('workflow has invalid error', () => {
     let result;
 
     try {
-        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+        throw cp.execFileSync('node', [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
@@ -50,7 +50,7 @@ jest.test('workflow has invalid job error', () => {
     let result;
 
     try {
-        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+        throw cp.execFileSync('node', [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
@@ -65,7 +65,7 @@ jest.test('workflow has unpinned error', () => {
     let result;
 
     try {
-        throw cp.execSync(`node ${ip}`, { env: process.env }).toString();
+        throw cp.execFileSync('node', [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
