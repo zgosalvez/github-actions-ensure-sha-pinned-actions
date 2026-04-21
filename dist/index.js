@@ -9101,6 +9101,7 @@ async function run() {
 
     for await (const file of workflowsGlobber.globGenerator()) {
       const basename = path.basename(file);
+      const relativePath = path.relative(process.cwd(), file);
       const fileContents = fs.readFileSync(file, 'utf8');
       const yamlContents = yaml.parse(fileContents);
       let fileHasError = false;
@@ -9111,7 +9112,7 @@ async function run() {
         break;
       }
 
-      core.startGroup(workflowsPath + '/' + basename);
+      core.startGroup(relativePath);
 
       for (const job in jobs) {
         const jobObject = jobs[job];
@@ -9123,11 +9124,13 @@ async function run() {
           const uses = getYamlAttribute(jobObject, "uses");
           const steps = getYamlAttribute(jobObject, "steps");
           if (uses !== undefined && uses !== null) {
-            jobHasError = runAssertions(uses, allowlist, isDryRun);
+            if (runAssertions(uses, allowlist, isDryRun, relativePath)) {
+              jobHasError = true;
+            }
           } else if (steps !== undefined && steps !== null) {
             for (const step of steps) {
-              if (!jobHasError) {
-                jobHasError = runAssertions(step['uses'], allowlist, isDryRun);
+              if (runAssertions(step['uses'], allowlist, isDryRun, relativePath)) {
+                jobHasError = true;
               }
             }
           } else {
@@ -9156,6 +9159,7 @@ async function run() {
 
     for await (const file of actionsGlobber.globGenerator()) {
       const basename = path.basename(path.dirname(file));
+      const relativePath = path.relative(process.cwd(), file);
       const fileContents = fs.readFileSync(file, 'utf8');
       const yamlContents = yaml.parse(fileContents);
       let fileHasError = false;
@@ -9172,8 +9176,8 @@ async function run() {
       const steps = getYamlAttribute(runs, 'steps');
       if (steps !== undefined && steps !== null) {
         for (const step of steps) {
-          if (!runHasError) {
-            runHasError = runAssertions(step['uses'], allowlist, isDryRun);
+          if (runAssertions(step['uses'], allowlist, isDryRun, relativePath)) {
+            runHasError = true;
           }
         }
         if (runHasError) {
@@ -9233,16 +9237,17 @@ function assertUsesAllowlist(uses, allowlist) {
   return isAllowed;
 }
 
-function runAssertions(uses, allowlist, isDryRun) {
+function runAssertions(uses, allowlist, isDryRun, file) {
   const hasError = assertUsesVersion(uses) && !assertUsesSha(uses) && !assertUsesAllowlist(uses, allowlist);
 
   if (hasError) {
     const message = `${uses} is not pinned to a full length commit SHA.`;
+    const annotation = file ? { file } : {};
 
     if (isDryRun) {
-      core.warning(message);
+      core.warning(message, annotation);
     } else {
-      core.error(message);
+      core.error(message, annotation);
     }
   }
 
