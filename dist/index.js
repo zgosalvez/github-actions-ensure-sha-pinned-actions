@@ -9095,7 +9095,7 @@ let glob;
 async function run() {
   try {
     core = await __nccwpck_require__.e(/* import() */ 421).then(__nccwpck_require__.bind(__nccwpck_require__, 6421));
-    glob = await Promise.all(/* import() */[__nccwpck_require__.e(421), __nccwpck_require__.e(860)]).then(__nccwpck_require__.bind(__nccwpck_require__, 3860));
+    glob = await Promise.all(/* import() */[__nccwpck_require__.e(421), __nccwpck_require__.e(324)]).then(__nccwpck_require__.bind(__nccwpck_require__, 3324));
     
     const allowlist = core.getInput('allowlist');
     const isDryRun = core.getInput('dry_run') === 'true';
