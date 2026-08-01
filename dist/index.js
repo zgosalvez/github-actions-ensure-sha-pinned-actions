@@ -9246,9 +9246,13 @@ function assertUsesAllowlist(uses, allowlist) {
   }
 
   const action = uses.substr(0, uses.indexOf('@'));
-  const isAllowed = allowlist.split(/\r?\n/).some((allow) => action.startsWith(allow));
+  const isAllowed = allowlist
+    .split(/\r?\n/)
+    .map((allow) => allow.trim())
+    .filter(Boolean)
+    .some((allow) => action.startsWith(allow));
 
-  if(isAllowed) {
+  if (isAllowed) {
     core.info(`${action} matched allowlist — ignoring action.`);
   }
 
