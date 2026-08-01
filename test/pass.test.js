@@ -11,7 +11,7 @@ const allowlist = 'INPUT_ALLOWLIST';
 jest.beforeEach(() => {
     process.env[workflowsPath] = 'test/stub/pass/workflows';
     process.env[actionsPath] = 'test/stub/pass/actions';
-    process.env[allowlist] = "aws-actions/\ndocker/login-action";
+    process.env[allowlist] = "aws-actions/\ndocker/login-action\n";
 });
 
 jest.afterEach(() => {

@@ -6,6 +6,7 @@ const path = require('path');
 const ip = path.join(__dirname, '../src/index.js');
 const workflowsPath = 'ZG_WORKFLOWS_PATH';
 const actionsPath = 'ZG_ACTIONS_PATH';
+const allowlist = 'INPUT_ALLOWLIST';
 
 jest.beforeEach(() => {
     process.env[workflowsPath] = 'foo';
@@ -69,6 +70,23 @@ jest.test('workflow has unpinned error', () => {
     } catch (error) {
         result = (error.stdout || error).toString();
     }
+
+    jest.expect(result).toContain('actions/checkout@v1 is not pinned to a full length commit SHA.');
+    jest.expect(result).not.toContain('No issues were found.');
+});
+
+jest.test('workflow has unpinned error with blank allowlist lines', () => {
+    process.env[workflowsPath] = 'test/stub/unpinned/workflows';
+    process.env[allowlist] = 'aws-actions/\ndocker/login-action\n';
+    let result;
+
+    try {
+        throw cp.execFileSync(process.execPath, [ip], { env: process.env }).toString();
+    } catch (error) {
+        result = (error.stdout || error).toString();
+    }
+
+    delete process.env[allowlist];
 
     jest.expect(result).toContain('actions/checkout@v1 is not pinned to a full length commit SHA.');
     jest.expect(result).not.toContain('No issues were found.');
