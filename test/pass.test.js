@@ -24,7 +24,7 @@ jest.test('actions pass', () => {
     let result;
 
     try {
-        throw execSync(`node ${ip}`, { env: process.env }).toString();
+        throw execSync(`${process.execPath} ${ip}`, { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
