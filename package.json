@@ -21,7 +21,7 @@
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/glob": "^0.7.0",
-    "yaml": "^2.8.4"
+    "yaml": "^2.9.0"
   },
   "overrides": {
     "brace-expansion": "^5.0.6",
