@@ -1,5 +1,5 @@
 const process = require('process');
-const {execSync} = require('child_process');
+const {execFileSync} = require('child_process');
 const jest = require('@jest/globals');
 const path = require('path');
 
@@ -24,7 +24,7 @@ jest.test('actions pass', () => {
     let result;
 
     try {
-        throw execSync(`${process.execPath} ${ip}`, { env: process.env }).toString();
+        throw execFileSync(process.execPath, [ip], { env: process.env }).toString();
     } catch (error) {
         result = (error.stdout || error).toString();
     }
