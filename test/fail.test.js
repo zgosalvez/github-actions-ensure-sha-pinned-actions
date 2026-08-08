@@ -92,6 +92,23 @@ jest.test('workflow has unpinned error with blank allowlist lines', () => {
     jest.expect(result).not.toContain('No issues were found.');
 });
 
+jest.test('workflow has unpinned error with commented allowlist lines', () => {
+    process.env[workflowsPath] = 'test/stub/unpinned/workflows';
+    process.env[allowlist] = 'aws-actions/          # Trust all actions published by aws-actions\ndocker/login-action   # Trust docker\'s login-action only\n';
+    let result;
+
+    try {
+        throw cp.execFileSync(process.execPath, [ip], { env: process.env }).toString();
+    } catch (error) {
+        result = (error.stdout || error).toString();
+    }
+
+    delete process.env[allowlist];
+
+    jest.expect(result).toContain('actions/checkout@v1 is not pinned to a full length commit SHA.');
+    jest.expect(result).not.toContain('No issues were found.');
+});
+
 jest.test('action has empty error', () => {
     process.env[actionsPath] = 'test/stub/empty/actions';
     let result;
