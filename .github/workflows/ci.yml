@@ -31,7 +31,7 @@ jobs:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
     - name: Get runs.using version
       id: get-runs-using-version
-      uses: zgosalvez/github-actions-get-action-runs-using-version@3514bdaf9a7c288dcae237fd7969306af3735775
+      uses: zgosalvez/github-actions-get-action-runs-using-version@2e2546a69d7c7f1e01b6f522aa5c3d1f549112ea
     - name: Set up Node
       uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
       with:
